@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GradeTrack</title>
+  <style>
+    :root { --primary:#1F4E79; --accent:#2E866B; --bg:#F4F6F9; --muted:#5F6B7A; --card:#fff; --border:#D5DBE3; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#14181d; --card:#1d232b; --border:#2e3742; --muted:#9aa7b6; --primary:#7fb2e0; }
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--primary); }
+    header { background:#1F4E79; color:#fff; padding:18px 20px; }
+    header h1 { margin:0; font-size:1.4rem; }
+    header p { margin:4px 0 0; color:#D6E4F0; font-size:.95rem; }
+    main { max-width:1040px; margin:0 auto; padding:16px; }
+    #stage { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px;
+             overflow:auto; min-height:200px; }
+    #status { color:var(--muted); padding:24px; text-align:center; }
+    .note { color:var(--muted); font-size:.9rem; line-height:1.5; margin:14px 2px; }
+    .note a { color:var(--primary); }
+  </style>
+  <script src="https://cjrtnc.leaningtech.com/5.0/loader.js"></script>
+</head>
+<body>
+  <header>
+    <h1>GradeTrack</h1>
+    <p>Student Grade and GPA Tracking System &middot; Java Swing running in your browser</p>
+  </header>
+  <main>
+    <div id="stage"><div id="status">Loading the Java runtime&hellip; the first load can take a few seconds.</div></div>
+    <p class="note">
+      Your courses and scores are saved in this browser only (on this device), so they stay after you close the page.
+      Clearing your browser's site data will erase them.
+      This page is a Java application (<a href="GradeTrack.jar">GradeTrack.jar</a>) run by CheerpJ, so it needs no installation.
+    </p>
+  </main>
+
+  <script type="module">
+    const status = document.getElementById("status");
+    try {
+      await cheerpjInit({ version: 17 });
+
+      // "/app/" in CheerpJ is the ROOT of the web server, not this folder.
+      // Work out this folder's path so it also works on GitHub Pages project sites (/repo-name/).
+      const jarPath = "/app" + new URL("GradeTrack.jar", location.href).pathname;
+
+      status.remove();
+      const stage = document.getElementById("stage");
+      cheerpjCreateDisplay(1000, 740, stage);
+
+      // The extra argument tells GradeTrack where to save: /files/ is kept in the browser (IndexedDB).
+      await cheerpjRunJar(jarPath, "/files/gradetrack_data.txt");
+    } catch (err) {
+      status.textContent = "Could not start GradeTrack: " + err;
+      console.error(err);
+    }
+  </script>
+</body>
+</html>
